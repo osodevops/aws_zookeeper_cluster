@@ -1,0 +1,48 @@
+---
+  # Role to deploy a Zookeeper cluster with netflix exhibitor controller
+  - hosts: localhost
+    connection: local
+    gather_facts: true
+    user: root
+    become: yes
+    become_user: root
+    vars:
+      # DNS
+      route_53_internal: true
+      route_53_external: false
+      int_dns_zone: local.
+      int_dns_record: zookeeper-1
+      int_dns_vpc:
+      int_dns_type: A
+      int_dns_ttl: 60
+      domain_name: "{{ int_dns_record }}.{{ int_dns_zone }}"
+      # Supervisor
+      supervisor:
+        amazon_ami: true
+      # Zookeeper
+      # Exhibitor
+      exhibitor:
+        configtype: s3
+        s3_bucket: com.eu-west-1.zookeeper
+      # Common
+      install_dev_tools: false
+      update_hostname: true
+      update_time_config: true
+      hostname: "{{ int_dns_record }}.df.local"
+      timezone: Europe/London
+      restart_server: false
+    roles:
+      - dns
+      - supervisor
+      - zookeeper
+      - exhibitor
+      - common
+    post_tasks:
+      - name: Reread supervisor
+        command: /usr/local/bin/supervisorctl reread
+      - name: Update supervisor
+        command: /usr/local/bin/supervisorctl update
+      - name: Restart service
+        command: /usr/local/bin/supervisorctl restart exhibitor
+      - name: Restart server
+        command: sudo reboot now
