@@ -1,0 +1,7 @@
+---
+
+  - include: 1_rhel.yml
+    when: ansible_distribution == 'Amazon'
+
+  - include: 2_debian.yml
+    when: ansible_distribution == 'Ubuntu'

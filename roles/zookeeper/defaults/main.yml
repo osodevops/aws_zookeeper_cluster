@@ -1,0 +1,14 @@
+---
+
+zookeeper:
+  version: 3.4.8
+  dir: /opt/zookeeper
+  data_dir: "{{ dir }}/data"
+  log_dir: "{{ dir }}/log"
+  # Ports vars
+  client_port: 2181
+  leader_port: 2888
+  election_port: 3888
+  # User vars
+  user: zookeeper
+  group: zookeeper

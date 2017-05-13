@@ -1,0 +1,16 @@
+---
+
+exhibitor:
+  version: 1.5.6
+  dir: /opt/exhibitor
+  data_dir: "{{ dir }}/data"
+  log_dir: "{{ dir }}/log"
+  config_dir: "{{ dir }}/conf"
+  configtype: s3
+  s3_bucket: foo.bar.region
+  s3_bucket_resources: "{{ s3_bucket }}/resources"
+  s3_key: exhibitor
+  fsconfigdir: /opt/exhibitor/conf
+  # User settings for controlling directories
+  user: zookeeper
+  group: zookeeper

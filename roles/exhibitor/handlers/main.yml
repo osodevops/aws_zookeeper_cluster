@@ -1,0 +1,9 @@
+---
+
+- name: restart supervisor
+  service:
+    name: supervisord
+    state: restarted
+
+- name: reload supervisor
+  shell: /usr/local/bin/supervisorctl reload
