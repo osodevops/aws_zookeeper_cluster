@@ -1,4 +1,4 @@
-#AWS Zookeeper Cluster
+AWS Zookeeper Cluster
 ------------
 
 This is an Ansible playbook and also guide on how to setup Zookeeper on AWS in a clustered mode.
@@ -31,6 +31,43 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+    - hosts: localhost
+    connection: local
+    gather_facts: true
+    user: root
+    become: yes
+    become_user: root
+    vars:
+      # DNS
+      route_53_internal: true
+      route_53_external: false
+      int_dns_zone: local.
+      int_dns_record: zookeeper-1
+      int_dns_vpc:
+      int_dns_type: A
+      int_dns_ttl: 60
+      domain_name: "{{ int_dns_record }}.{{ int_dns_zone }}"
+      # Supervisor (Only set this to true if you are using the Amazon Linux AMI)
+      supervisor:
+        amazon_ami: true
+      # Zookeeper
+      # Exhibitor
+      exhibitor:
+        configtype: s3
+        s3_bucket: com.eu-west-1.zookeeper
+    roles:
+      - dns
+      - supervisor
+      - zookeeper
+      - exhibitor
+    post_tasks:
+      - name: Reread supervisor
+        command: /usr/local/bin/supervisorctl reread
+      - name: Update supervisor
+        command: /usr/local/bin/supervisorctl update
+      - name: Restart service
+        command: /usr/local/bin/supervisorctl restart exhibitor
+      - name: Restart server
+        command: sudo reboot now
+
+*Please note, we have included the example above as a file named: zookeeper_node.yml*
